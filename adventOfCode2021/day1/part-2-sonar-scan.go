@@ -30,7 +30,7 @@ func input_from_file(filename string) []int {
 }
 
 func main() {
-	d := input_from_file("d1-data")
+	d := input_from_file("data")
 	length := len(d)
 
 	//loop through the data and compute the result
