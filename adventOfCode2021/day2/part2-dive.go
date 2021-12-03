@@ -25,15 +25,18 @@ func main() {
 	depth := 0
 	aim := 0
 	n := 0
+	var s string
 	for _, b := range instruction_slice {
-		if strings.Split(b, " ")[0] == "forward" {
+		s = strings.Split(b, " ")[0]
+		switch s {
+		case "forward":
 			n, _ = (strconv.Atoi(strings.Split(b, " ")[1]))
 			horizontal += n
 			depth += aim * n
-		} else if strings.Split(b, " ")[0] == "up" {
+		case "up":
 			n, _ = (strconv.Atoi(strings.Split(b, " ")[1]))
 			aim -= n
-		} else if strings.Split(b, " ")[0] == "down" {
+		case "down":
 			n, _ = (strconv.Atoi(strings.Split(b, " ")[1]))
 			aim += n
 		}
