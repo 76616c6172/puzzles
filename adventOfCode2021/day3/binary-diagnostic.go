@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"io/ioutil"
 	"log"
 	"strings"
@@ -8,60 +9,50 @@ import (
 
 func main() {
 
-	/*
-		// datatype to hold each chunck of this pretend binary
-		// I will make an array of theese so it can be accessed in this way:
-		//
-		// [n] abcde
-		// ---------
-		// [0] 00100
-		// [1] 11110
-		// [2] 10110
-		//
-		// to access leftmost "bit" of the first "chunck" bin[0].a
-		type bin struct {
-			a int //1
-			b int //2
-			c int //3
-			d int //4
-			e int //5
-			f int //6
-			g int //7
-			h int //8
-			i int //9
-			j int //10
-			k int //11
-			l int //12
-		}
-	*/
+	var gamma string
+	var epsilon string
+	var bin []string = input("data")
 
-	// or maybe just use *a slice..
-	// since the raw input data will be a string we might as well just keep it so
-	// read in the data
-	var bin []string = input("testdata")
-	/*
-		for _, a := range bin {
-			fmt.Println(a)
-		}
-	*/
-
-	// I am amazed that this works for accessing the 5th "bit" of the first chunk by doing
-	// n := bin[0][4]
-	// fmt.Printf("%c", bin[0][4])
-
-	// -------------------------------------------------------------
-	// build the answer string
-	var answer string
-	zeros := 0
 	ones := 0
-
-	//FIXME: now what, how do we do this and build the answer string?
-	var sw int
-	for a, _ := range bin {
-		for i := 0; i < 12; i++ {
-
+	zeros := 0
+	for a := 0; a < 12; a++ {
+		for b := 0; b < len(bin)-1; b++ {
+			//0
+			if bin[b][a] == 48 {
+				zeros++
+			} else {
+				ones++
+			}
+		}
+		if zeros > ones {
+			gamma += "0"
+		} else if zeros < ones {
+			gamma += "1"
+		} else {
+			log.Fatal("ERROR: Zeros and ones are probably exactly equal in this position.\n")
+		}
+		zeros = 0
+		ones = 0
+	}
+	gammaSlice := strings.Split(gamma, "")
+	for i := 0; i < 12; i++ {
+		if gammaSlice[i] == "0" {
+			epsilon += "1"
+		} else {
+			epsilon += "0"
 		}
 	}
+
+	// invert gamma to get epsilon
+	// multiply
+	// convert to int
+
+	fmt.Println("Gamma:\n", gamma)
+	fmt.Println("Epsilon:\n", epsilon)
+
+	// FIXME: convert gamma and epsilon strings properly to REAL 12 bit binary data
+	// multiply them and print the result
+	fmt.Println("Now all that's left is to read both 12 bit chunks as decimal numbers and multiply them =O=")
 }
 
 func input(filename string) []string {
