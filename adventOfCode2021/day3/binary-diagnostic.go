@@ -4,28 +4,26 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"strconv"
 	"strings"
 )
 
 func main() {
+	//wrangle the data
 	var bin []string = input("data")
+
+	//compute the data
 	gamma, epsilon := compute_shit(bin)
-
-	//gammaSlice := strings.Split(gamma, "")
-	//	for i := 0; i < 12; i++ {
-	//		if gammaSlice[i] == "0" {
-	//			epsilon += "1"
-	//		} else {
-	//			epsilon += "0"
-	//		}
-	//	}
-
 	fmt.Println("Gamma:\n", gamma)
 	fmt.Println("Epsilon:\n", epsilon)
 
-	// FIXME: convert gamma and epsilon strings properly to REAL 12 bit binary data
-	// multiply them and print the result
-	fmt.Println("Now all that's left is to read both 12 bit chunks as decimal numbers and multiply them =O=")
+	//convert binary strings to integers
+	gammaDecimal, _ := strconv.ParseInt(gamma, 2, 32)
+	epsilonDecimal, _ := strconv.ParseInt(epsilon, 2, 32)
+
+	//compute and print the solution
+	solution := gammaDecimal * epsilonDecimal
+	fmt.Println("Solution\n", solution)
 }
 
 func input(filename string) []string {
