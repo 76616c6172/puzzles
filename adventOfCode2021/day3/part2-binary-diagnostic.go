@@ -10,7 +10,7 @@ import (
 
 func main() {
 	//wrangle the data
-	var bin []string = input("data")
+	var bin []string = input_handler("data")
 
 	//fuck with the slice until we're done
 	var s []string = bin
@@ -93,7 +93,7 @@ func main() {
 	fmt.Println(s)
 */
 
-func input(filename string) []string {
+func input_handler(filename string) []string {
 	f, err := ioutil.ReadFile(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -125,8 +125,8 @@ func compute_shit(data []string) (string, string) {
 			gamma += "1"
 			epsilon += "0"
 		} else { //if even, treat the bit criteria as a "1"
-			gamma += "0"
-			epsilon += "1"
+			gamma += "1"
+			epsilon += "0"
 		}
 		zeros = 0
 		ones = 0
