@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"strconv"
 	"strings"
 )
 
@@ -14,35 +15,29 @@ func main() {
 	var bin []string = input_handler("example")
 	//This slice will shrink
 	var s []string = bin
-	//	var o2 string
-	fmt.Println(s)
+	var oxygen_generator_rating int64
+	//var	CO2_scrubber_rating int64
 
-	// FIXME: as the slice is shrinking we end up skipping some entries without checking if
-	// they match the bitcriteria because they were scooted to a lower index in the slice
-	bitcriteria_gamma, _ := compute_shit(s)
+	//Compute oxygen_generator_rating
+	bitcriteria, _ := compute_shit(s)
 	for bit := 0; bit < BIT_AMOUNT; bit++ {
-		fmt.Println("---- bit", bit)
 		for word := 0; word < len(s)-1; word++ {
-			fmt.Printf("Checking index %d\n", word)
-			if s[word][bit] != bitcriteria_gamma[bit] {
-				//fmt.Printf("Have: %#v Want %#v\n", s[word][bit], bitcriteria_gamma[bit])
-				/* shrinking array without keeping the order
-
-								s[word] = s[len(s)-1]
-								s = s[:len(s)-1]
-				:*/
-				//shrinking while keeping order intact
-				fmt.Println("Removed:", s[word])
-				s = append(s[:word], s[word+1:]...)
-				word = -1
+			if s[word][bit] != bitcriteria[bit] {
+				s[word] = s[len(s)-1]
+				s = s[:len(s)-1]
+				word = -1 //UGLY HACK: Since we just changed the order, start checking from index 0 again
 			}
-
 		}
-		//then compute the bitcriteria
-		bitcriteria_gamma, _ = compute_shit(s)
-		fmt.Println(s)
+		//then recompute the bitcriteria
+		bitcriteria, _ = compute_shit(s)
+		//UGLY HACK: For some reason the loop stops when there are only 2 entries left.
+		if len(s) <= 2 {
+			oxygen_generator_rating, _ = strconv.ParseInt(bitcriteria, 2, 32)
+			break
+		}
 	}
 
+	fmt.Println(oxygen_generator_rating)
 }
 
 func input_handler(filename string) []string {
