@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
+	"strconv"
 	"strings"
-	"unicode/utf8"
 )
 
 func main() {
@@ -14,43 +14,84 @@ func main() {
 
 	//fuck with the slice until we're done
 	var s []string = bin
-	for b := 0; b < 12; b++ {
+	var o2 string
 
-		//check if we're done
-		if len(s) < 1 {
-			fmt.Println("DONE: \n", s)
-			return
-		}
-
+	for bit := 0; bit < 12; bit++ {
 		//get the bitcriteria
-		bitcriteria, _ := compute_shit(s)
-		var debugString string = ""
-		var a string = ""
-		for i := len(s) - 2; i > 0; i-- {
-			a = strings.Repeat("#", utf8.RuneCountInString(b-1))
+		bitcriteria_gamma, _ := compute_shit(s)
+		fmt.Println(bit, "<-- INDEX THE BIT WE'RE CHECKING FOR CRITERIA")
+		fmt.Println("Bitcriteria g: \t", bitcriteria_gamma)
+		for a := 0; a < len(s)-1; a++ {
+			fmt.Println("Chunk we're on: \t", s[a])
 
-			fmt.Println("bitcriteria: \t", a+bitcriteria[b])
-			//remove entries from the slice that don't match the criteria
-			if s[i][b] != bitcriteria[b] {
-				fmt.Println("REMOVED: \t", s[i])
-				s[i] = s[len(s)-1]
-				s = s[:len(s)-1]
-			} else {
-				fmt.Println("APPROVED: \t", s[i])
+			if s[a][bit] != bitcriteria_gamma[bit] {
+				fmt.Println("------- SHRINKING THE ARRAY ---------")
+				s = append(s[:a], s[a+1:]...)
 			}
 
-			//check if we're done
-			if len(s) < 1 {
-				fmt.Println("DONE: \n", s)
-				return
+			o2 = s[a]
+			if bit == 12 && a < 2 {
+				fmt.Println(s)
 			}
-			a = ""
-
+			o2Decimal, _ := strconv.ParseInt(o2, 2, 32)
+			fmt.Println("o2Decimal:", o2Decimal)
 		}
+	}
+
+	var z []string = bin
+	for bit := 0; bit < 12; bit++ {
+		//get the bitcriteria
+		_, bitcriteria_epsilon := compute_shit(z)
+		fmt.Println(bit, "<-- INDEX THE BIT WE'RE CHECKING FOR CRITERIA")
+		fmt.Println("Bitcriteria e: \t", bitcriteria_epsilon)
+		for a := 0; a < len(z)-1; a++ {
+			fmt.Println("Chunk we're on: \t", z[a])
+
+			if z[a][bit] != bitcriteria_epsilon[bit] {
+				fmt.Println("------- SHRINKING THE ARRAY ---------")
+				s = append(z[:a], z[a+1:]...)
+			}
+
+			o2 = z[a]
+			if bit == 12 && a < 2 {
+				fmt.Println(z)
+			}
+			epsDecimal, _ := strconv.ParseInt(o2, 2, 32)
+			fmt.Println("epsDecimal:", epsDecimal)
+		}
+
+		//		fmt.Println(epsDecimal * o2Decimal)
 
 	}
-	fmt.Println(s)
 }
+
+/*
+				var debugString string = ""
+				var a string = ""
+				for i := len(s) - 2; i > 0; i-- {
+					a = strings.Repeat("#", utf8.RuneCountInString(b-1))
+
+					fmt.Println("bitcriteria: \t", a+bitcriteria[b])
+					//remove entries from the slice that don't match the criteria
+					if s[i][b] != bitcriteria[b] {
+						fmt.Println("REMOVED: \t", s[i])
+						s[i] = s[len(s)-1]
+						s = s[:len(s)-1]
+					} else {
+						fmt.Println("APPROVED: \t", s[i])
+					}
+
+					//check if we're done
+					if len(s) < 1 {
+						fmt.Println("DONE: \n", s)
+						return
+					}
+					a = ""
+
+				}
+		}
+	fmt.Println(s)
+*/
 
 func input(filename string) []string {
 	f, err := ioutil.ReadFile(filename)
