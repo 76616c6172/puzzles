@@ -21,21 +21,28 @@ func main() {
 	// they match the bitcriteria because they were scooted to a lower index in the slice
 	bitcriteria_gamma, _ := compute_shit(s)
 	for bit := 0; bit < BIT_AMOUNT; bit++ {
+		fmt.Println("---- bit", bit)
 		for word := 0; word < len(s)-1; word++ {
+			fmt.Printf("Checking index %d\n", word)
 			if s[word][bit] != bitcriteria_gamma[bit] {
+				//fmt.Printf("Have: %#v Want %#v\n", s[word][bit], bitcriteria_gamma[bit])
 				/* shrinking array without keeping the order
 
 								s[word] = s[len(s)-1]
 								s = s[:len(s)-1]
 				:*/
 				//shrinking while keeping order intact
+				fmt.Println("Removed:", s[word])
 				s = append(s[:word], s[word+1:]...)
+				word = -1
 			}
+
 		}
 		//then compute the bitcriteria
 		bitcriteria_gamma, _ = compute_shit(s)
 		fmt.Println(s)
 	}
+
 }
 
 func input_handler(filename string) []string {
