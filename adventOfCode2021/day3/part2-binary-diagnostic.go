@@ -8,18 +8,16 @@ import (
 	"strings"
 )
 
-var BIT_AMOUNT = 5
-
 func main() {
 	//wrangle the data
-	var bin []string = input_handler("example")
+	data, BIT_AMOUNT := input_handler("example")
 	//This slice will shrink
-	var s []string = bin
+	var s []string = data
 	var oxygen_generator_rating int64
 	//var	CO2_scrubber_rating int64
 
 	//Compute oxygen_generator_rating
-	bitcriteria, _ := compute_shit(s)
+	bitcriteria, _ := compute_shit(s, BIT_AMOUNT)
 	for bit := 0; bit < BIT_AMOUNT; bit++ {
 		for word := 0; word < len(s)-1; word++ {
 			if s[word][bit] != bitcriteria[bit] {
@@ -29,7 +27,7 @@ func main() {
 			}
 		}
 		//then recompute the bitcriteria
-		bitcriteria, _ = compute_shit(s)
+		bitcriteria, _ = compute_shit(s, BIT_AMOUNT)
 		//UGLY HACK: For some reason the loop stops when there are only 2 entries left.
 		if len(s) <= 2 {
 			oxygen_generator_rating, _ = strconv.ParseInt(bitcriteria, 2, 32)
@@ -40,7 +38,7 @@ func main() {
 	fmt.Println(oxygen_generator_rating)
 }
 
-func input_handler(filename string) []string {
+func input_handler(filename string) ([]string, int) {
 	f, err := ioutil.ReadFile(filename)
 	if err != nil {
 		log.Fatal(err)
@@ -49,15 +47,16 @@ func input_handler(filename string) []string {
 	content := string(f)
 	content = strings.TrimSuffix(content, "\n")
 	output := strings.Split(content, "\n")
-	return output
+	bitsize := len(output[0])
+	return output, bitsize
 }
 
-func compute_shit(data []string) (string, string) {
+func compute_shit(data []string, size int) (string, string) {
 	var gamma string = ""
 	var epsilon string = ""
 	ones := 0
 	zeros := 0
-	for a := 0; a < BIT_AMOUNT; a++ {
+	for a := 0; a < size; a++ {
 		for b := 0; b < len(data)-1; b++ {
 			//0
 			if data[b][a] == 48 {
