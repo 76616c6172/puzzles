@@ -7,37 +7,35 @@ import (
 	"strings"
 )
 
+var BIT_AMOUNT = 5
+
 func main() {
 	//wrangle the data
-	var bin []string = input_handler("testdata")
-	fmt.Printf("Og Slice \t: %#v\n", bin)
-
-	//fuck with the slice until we're done
+	var bin []string = input_handler("example")
+	//This slice will shrink
 	var s []string = bin
-	fmt.Printf("Cp slice\t: %#v\n", s)
 	//	var o2 string
-
-	for bit := 0; bit < 12; bit++ {
-		bitcriteria_gamma, _ := compute_shit(s)
-		fmt.Println("------ CHECKING BIT ------", bit)
-		fmt.Println("criteria: \t", bitcriteria_gamma)
-
-		for a := 0; a < len(s)-1; a++ {
-			if s[a][bit] != bitcriteria_gamma[bit] {
-				fmt.Println("rejected: \t", s[a])
-				s = append(s[:a], s[a+1:]...)
-				fmt.Println("SLICE LENGTH: ", len(s))
-			}
-			/*
-				o2 = s[a]
-				o2Decimal, _ := strconv.ParseInt(o2, 2, 32)
-				fmt.Println("o2Decimal:", o2Decimal)
-			*/
-		}
-		fmt.Printf("CURRENT ARRAY%#v\n", s)
-	}
 	fmt.Println(s)
 
+	// FIXME: as the slice is shrinking we end up skipping some entries without checking if
+	// they match the bitcriteria because they were scooted to a lower index in the slice
+	bitcriteria_gamma, _ := compute_shit(s)
+	for bit := 0; bit < BIT_AMOUNT; bit++ {
+		for word := 0; word < len(s)-1; word++ {
+			if s[word][bit] != bitcriteria_gamma[bit] {
+				/* shrinking array without keeping the order
+
+								s[word] = s[len(s)-1]
+								s = s[:len(s)-1]
+				:*/
+				//shrinking while keeping order intact
+				s = append(s[:word], s[word+1:]...)
+			}
+		}
+		//then compute the bitcriteria
+		bitcriteria_gamma, _ = compute_shit(s)
+		fmt.Println(s)
+	}
 }
 
 func input_handler(filename string) []string {
@@ -57,7 +55,7 @@ func compute_shit(data []string) (string, string) {
 	var epsilon string = ""
 	ones := 0
 	zeros := 0
-	for a := 0; a < 12; a++ {
+	for a := 0; a < BIT_AMOUNT; a++ {
 		for b := 0; b < len(data)-1; b++ {
 			//0
 			if data[b][a] == 48 {
