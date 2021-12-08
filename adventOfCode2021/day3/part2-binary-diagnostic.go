@@ -18,6 +18,14 @@ func main() {
 		criteria := bitcriteria(ox, bit)
 		//for i, v := range ox { //INTERESTING: when looping over the range reducing the index did not push back loop
 		for word := 0; word < len(ox)-1; word++ {
+			if len(ox) == 2 {
+				var answer string
+				for g := 0; g < BIT_AMOUNT; g++ {
+					fmt.Printf("%c", bitcriteria(ox, g))
+				}
+				fmt.Println(answer)
+				return
+			}
 			if ox[word][bit] != criteria {
 				ox[word] = ox[len(ox)-1] //THEORY: Is the problem that we're trying to replace the last index?
 				ox = ox[:len(ox)-1]
