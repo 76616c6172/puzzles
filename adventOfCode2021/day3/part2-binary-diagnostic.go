@@ -4,79 +4,61 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"strconv"
 	"strings"
 )
 
 func main() {
 	//wrangle the data
 	data, BIT_AMOUNT := input_handler("example")
-	//This slice will shrink
-	var s []string = data
-	var oxygen_generator_rating int64
-	//var	CO2_scrubber_rating int64
 
-	//Compute oxygen_generator_rating
-	bitcriteria, _ := compute_shit(s, BIT_AMOUNT)
+	//make a copies of the original array, so we can shrink it later
+	ox := data
+	fmt.Println(ox)
 	for bit := 0; bit < BIT_AMOUNT; bit++ {
-		for word := 0; word < len(s)-1; word++ {
-			if s[word][bit] != bitcriteria[bit] {
-				s[word] = s[len(s)-1]
-				s = s[:len(s)-1]
-				word = -1 //UGLY HACK: Since we just changed the order, start checking from index 0 again
+		criteria := bitcriteria(ox, bit)
+		//for i, v := range ox { //INTERESTING: when looping over the range reducing the index did not push back loop
+		for word := 0; word < len(ox)-1; word++ {
+			if ox[word][bit] != criteria {
+				ox[word] = ox[len(ox)-1] //THEORY: Is the problem that we're trying to replace the last index?
+				ox = ox[:len(ox)-1]
+				word-- //go back one element becaue we just shrunk the array
 			}
-		}
-		//then recompute the bitcriteria
-		bitcriteria, _ = compute_shit(s, BIT_AMOUNT)
-		//UGLY HACK: For some reason the loop stops when there are only 2 entries left.
-		if len(s) <= 2 {
-			oxygen_generator_rating, _ = strconv.ParseInt(bitcriteria, 2, 32)
-			break
+			fmt.Println(ox)
 		}
 	}
 
-	fmt.Println(oxygen_generator_rating)
+	//figure out the oxygen_generator_rating
+	//figure out the co2_scrubber_rating
+	//print the slice
 }
 
+// Computes the bicriteria for the current bit
+func bitcriteria(arr []string, currentBit int) uint8 {
+	var zeros int
+	var ones int
+	for _, v := range arr {
+		if v[currentBit] == '0' {
+			zeros++
+		} else {
+			ones++
+		}
+	}
+	if zeros > ones {
+		return '0'
+	} else {
+		return '1'
+	}
+}
+
+// Takes in the data and returns a slice and the amount of bits
 func input_handler(filename string) ([]string, int) {
 	f, err := ioutil.ReadFile(filename)
 	if err != nil {
 		log.Fatal(err)
 	}
-
 	content := string(f)
 	content = strings.TrimSuffix(content, "\n")
 	output := strings.Split(content, "\n")
 	bitsize := len(output[0])
 	return output, bitsize
-}
-
-func compute_shit(data []string, size int) (string, string) {
-	var gamma string = ""
-	var epsilon string = ""
-	ones := 0
-	zeros := 0
-	for a := 0; a < size; a++ {
-		for b := 0; b < len(data)-1; b++ {
-			//0
-			if data[b][a] == 48 {
-				zeros++
-			} else {
-				ones++
-			}
-		}
-		if zeros > ones {
-			gamma += "0"
-			epsilon += "1"
-		} else if zeros < ones {
-			gamma += "1"
-			epsilon += "0"
-		} else { //if even, treat the bit criteria as a "1"
-			gamma += "1"
-			epsilon += "0"
-		}
-		zeros = 0
-		ones = 0
-	}
-	return gamma, epsilon
 }
