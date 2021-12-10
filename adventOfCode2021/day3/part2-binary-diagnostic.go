@@ -12,17 +12,16 @@ func main() {
 	//wrangle the data
 	data, BIT_AMOUNT := input_handler("data")
 
-	// make a copy of the data so we can access the unmodified slice
+	// make a copy of the data so we can still access the underlying data after we mangle it
 	data2 := make([]string, len(data))
 	copy(data2, data)
 
-	//make a copies of the original array, so we can shrink it later
+	// crunch numbers and completely mangle the array beneath the slice in the process
 	oxygen_generator_rating := solve(data, BIT_AMOUNT, true)
 	co2_scrubber_rating := solve(data2, BIT_AMOUNT, false)
 
 	//Print the answer
 	fmt.Println("Answer: \n", oxygen_generator_rating*co2_scrubber_rating)
-
 }
 
 // Computes the bicriteria for the current bit
