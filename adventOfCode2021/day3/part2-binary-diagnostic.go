@@ -24,7 +24,7 @@ func main() {
 	fmt.Println("Answer: \n", oxygen_generator_rating*co2_scrubber_rating)
 }
 
-// Computes the bicriteria for the current bit
+// Computes the bicriteria for the current bit and returns true if the criteria is 1
 func bit_is_1(arr []string, currentBit int) bool {
 	var zeros int
 	var ones int
@@ -45,9 +45,9 @@ func bit_is_1(arr []string, currentBit int) bool {
 
 func solve(arr []string, BIT_AMOUNT int, bit_rule bool) int64 {
 	var criteria uint8
-	//get bitcriteria
 	for bit := 0; bit < BIT_AMOUNT; bit++ {
 		fmt.Println(arr)
+		//get bitcriteria
 		if bit_is_1(arr, bit) == bit_rule {
 			criteria = '1'
 		} else {
@@ -62,9 +62,9 @@ func solve(arr []string, BIT_AMOUNT int, bit_rule bool) int64 {
 			return answer
 		}
 		for word := 0; word <= len(arr)-1; word++ {
-			//						1 < 2
+			//if the criteria doesn't match, delete the word from the slice
 			if arr[word][bit] != criteria {
-				arr[word] = arr[len(arr)-1] //THEORY: Is the problem that we're trying to replace the last index?
+				arr[word] = arr[len(arr)-1]
 				arr = arr[:len(arr)-1]
 				word-- //go back one element becaue we just shrunk the array
 			}
