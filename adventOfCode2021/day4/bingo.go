@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"io/ioutil"
+	"log"
 	"strings"
 )
 
@@ -24,41 +25,6 @@ func main() {
 
 	data := input_handler_2(bbd, raw, BOARD_AMOUNT)
 
-	/*
-		for i, v := range board_data {
-			fmt.Println(i, v)
-		}
-	*/
-
-	//Wonderful we have a slice of rows but the fucking whitespace man
-
-	/*
-		inside := true
-		y := 0
-		count := 0
-		//loop through rows
-		for _, row := range board_data {
-			x := strings.Split(row, " ")
-			for _, v := range x {
-				fmt.Println("Element is", v, "Count: ", count)
-				if y > 4 {
-					inside = false
-				}
-				if count < 5 && v != " " && inside {
-					number, _ := strconv.Atoi(v)
-					bbd[board_index][y][count] = number
-					count++
-					fmt.Println("ADDED: ", number, "Increased count to: ", count)
-				}
-				if count > 4 && v == "" && y < 5 {
-					y++
-					count = 0
-				}
-			}
-	*/
-	//PRINTING
-	fmt.Println(data, "\n\n")
-
 	//print out all the boards
 	fmt.Println("Boards:")
 	for n := 0; n < BOARD_AMOUNT; n++ {
@@ -68,13 +34,42 @@ func main() {
 		fmt.Println()
 	}
 
-	/*
-		//we can loop over the winning numbers like this:
-		for _, x := range winning_nums {
-			fmt.Println(x)
-		}
-	*/
 	fmt.Println("Numbers:", winning_nums)
+	//number in y row
+	//nuiy[current_board][row] = amount of matches in this row
+	nuiy := make([][5]int, BOARD_AMOUNT) //matches in [board_index][y_row]
+	nuix := make([][5]int, BOARD_AMOUNT) //matches in [board_index][x_row]
+
+	for _, num := range winning_nums {
+
+		//loop through the boards
+		for cur_board := 0; cur_board < BOARD_AMOUNT; cur_board++ {
+
+			//check for horizontal matchess
+			for y := 0; y < 5; y++ {
+				if row_contains(data[cur_board][y][:], num) {
+					nuiy[cur_board][y]++
+					fmt.Println("Number:", num, "found in board:", cur_board, "row:", y, "has", nuiy[cur_board][y], "matches!")
+				}
+				//check if any horizontal winners
+				if nuiy[cur_board][y] == 5 {
+					fmt.Println("Holy shit, Board", cur_board+1, "has 5 matches in row:", y)
+					return
+				}
+
+				//check for vertical matches
+				for x:= 0; x<5; x++ {
+					if collum_contains(data[cur_board])
+
+				}
+
+
+			}
+
+		}
+
+	}
+
 }
 
 //Returns winning_nums, board_data, board_amount
@@ -126,6 +121,15 @@ func input_handler_2(slice [][][]string, raw []string, board_amount int) [][][]s
 			return slice
 		}
 	}
-	//PLACEHOLDER RETURN
+	log.Fatal("input_handler_2 error")
 	return slice
+}
+
+func row_contains(row []string, e string) bool {
+	for _, v := range row {
+		if v == e {
+			return true
+		}
+	}
+	return false
 }
