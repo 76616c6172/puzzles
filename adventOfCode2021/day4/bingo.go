@@ -8,185 +8,164 @@ import (
 	"strings"
 )
 
-//Returns winning_nums, board_board_3d, board_amount
-func input_handler_1(filename string) ([]string, int, []string) {
-	f, _ := ioutil.ReadFile(filename)
-	a := string(f)
+// Opens file and returns string
+func get_input(filename string) string {
+	f, err := ioutil.ReadFile(filename)
+	if err != nil {
+		log.Fatal(err)
+	}
+	return string(f)
+}
 
-	//extract the amount of boards
-	newLines := strings.Count(a, "\n")
-	board_amount := (newLines - 1) / 6
+// Holds information about a particular board, such as its numbers
+type board struct {
+	//board.nums[y][x]
+	num                 [5][5]int  //stores the number in the specified cell
+	crossed             [5][5]bool //stores if a cell was crossed off
+	flag                bool       //flag is true if the board already won
+	crossed_in_y_row    [5]int
+	crossed_in_x_collum [5]int
+	ranking             int //stores the order in which the board won
+	last_called_with    int //stores the number that was called that made the board win
+}
+
+// Returns winning numbers and all board data
+func data_wrangler(input string) ([]int, []board, int) {
+	s := strings.Split(input, "\n")
+	nums := strings.Split(s[0], ",")
+	amount_winning_nums := len(nums)
 
 	//extract the winning numbers
-	b := strings.Split(a, "\n")
-	numbers := (strings.Split(b[0], ","))
-
-	//extract the bingo boards somehow and put them in the slice
-	return numbers, board_amount, b
-}
-
-func input_handler_2(slice [][][]string, raw_input []string, board_amount int) [][][]string {
+	winning_nums := make([]int, amount_winning_nums)
+	for i, v := range nums {
+		a := string(v)
+		b, _ := strconv.Atoi(a)
+		winning_nums[i] = b
+	}
 
 	//extract the boards
-	completed_boards := 0
-	index := 2
-	board_number := 0
-	y := 0
-	for completed_boards <= board_amount {
-		row := strings.Split(raw_input[index], " ")
-		for i, v := range row {
-			if v == "" || v == " " || v == "\n" { //remove empty elements
-				row = append(row[:i], row[i+1:]...)
+	amount_of_boards := (strings.Count(input, "\n") - 1) / 6
+	boards := make([]board, amount_of_boards)
+	x, y, n := 0, 0, 0
+	for _, row := range s[1:] {
+		r := strings.Split(row, " ")
+		for _, e := range r {
+			if e != "" {
+				num, err := strconv.Atoi(e)
+				if err != nil {
+					log.Fatal(err)
+				}
+				boards[n].num[y][x] = num
+				x++
+				if x == 5 {
+					y++
+					x = 0
+				}
+				if y == 5 {
+					n++
+					y = 0
+				}
 			}
 		}
-		//DEBUG SANITY CHECK
-		//fmt.Printf("Board board_3d: %#v \n", row) //instead of printing, store in board board_3d
-		//fmt.Println("BOARD:", board_number)
-		for x, v_2 := range row { //put the current row into the board
-			slice[board_number][y][x] = v_2
-		}
-		y++
-		index++
-		if y == 6 {
-			y = 0
-			board_number++
-		}
-		if board_number > board_amount {
-			return slice
-		}
-		if index > board_amount*6 {
-			return slice
-		}
 	}
-	log.Fatal("input_handler_2 error")
-	return slice
+
+	return winning_nums, boards, amount_of_boards
 }
 
-//returns true if the row contains the string e
-func row_contains(row []string, e string) bool {
-	for _, v := range row {
-		if v == e {
-			return true
-		}
-	}
-	return false
-}
+func main() {
+	FILENAME := "data"
+	input := get_input(FILENAME)
+	winning_nums, boards, amount_of_boards := data_wrangler(input)
 
-// returns winner_index, winning_row_or_collum_index, last_called
-func solve(board_3d [][][]string, winning_nums []string, board_amount int) (int, int, int, string, []string) {
-	num_in_y := make([][5]int, board_amount) //matches in [board_index][y_row]
-	num_in_x := make([][5]int, board_amount) //matches in [board_index][x_row]
+	//print winning numbers
+	fmt.Println(winning_nums)
 
-	var last_called string
-	var winning_y int = -1
-	var winning_x int = -1
-	var winner_index int
-
-	new_winning_nums := winning_nums
-	for i, num := range winning_nums {
-
-		//loop through the boards
-		for cur_board := 0; cur_board < board_amount; cur_board++ {
-
-			//check for horizontal matchess
+	//iterate through the numbers and mark off the boards
+	rank := 1 //the first board that wins will be rank 1, the next rank2 and so on
+	for _, winning_num := range winning_nums {
+		//iterate through the boards
+		for board_index := 0; board_index < amount_of_boards; board_index++ {
 			for y := 0; y < 5; y++ {
-				if row_contains(board_3d[cur_board][y][:], num) {
-					num_in_y[cur_board][y]++
-				}
-				//check if any horizontal winners
-				if num_in_y[cur_board][y] == 5 {
-					fmt.Println("Holy shit, Board", cur_board+1, "has 5 matches in row:", y)
-					winner_index = cur_board
-					winning_y = y
-					last_called = num
-					new_winning_nums = winning_nums[:i+1]
-					return winner_index, winning_x, winning_y, last_called, new_winning_nums
-				}
+				for x := 0; x < 5; x++ {
+					if !boards[board_index].flag && winning_num == boards[board_index].num[y][x] {
+						boards[board_index].crossed[y][x] = true
+						boards[board_index].crossed_in_x_collum[x]++
+						boards[board_index].crossed_in_y_row[y]++
+						boards[board_index].last_called_with = winning_num
 
-			}
-			//check for vertical matches
-			for x := 0; x < 5; x++ {
-				for y := 0; y < 5; y++ {
-					if board_3d[cur_board][y][x] == num {
-						num_in_x[cur_board][x]++
-						if cur_board == 37 {
+						//check for winners horizontally
+						if boards[board_index].crossed_in_x_collum[x] == 5 {
+							boards[board_index].ranking = rank
+							boards[board_index].flag = true
+
+							rank++
+						}
+						//check for winners vertically
+						if boards[board_index].crossed_in_y_row[y] == 5 {
+							boards[board_index].ranking = rank
+							boards[board_index].flag = true
+							rank++
 						}
 					}
-					//check if any horizontal winners
-					if num_in_x[cur_board][x] == 5 {
-						fmt.Println("Holy shit, Board", cur_board+1, "has 5 matches in collum:", x)
-						winner_index = cur_board
-						winning_x = x
-						last_called = num
-						new_winning_nums = winning_nums[:i+1]
-						return winner_index, winning_x, winning_y, last_called, new_winning_nums
+				}
+			}
+		}
+	}
+	//print out the boards nicely:
+	for n := 0; n < amount_of_boards; n++ {
+		fmt.Printf("Board rank: %d\n", boards[n].ranking)
+		for y := 0; y < 5; y++ {
+			for x := 0; x < 5; x++ {
+				if boards[n].crossed[y][x] {
+					fmt.Printf("⦗%d⦘\t", boards[n].num[y][x])
+				} else {
+					fmt.Printf("%d\t", boards[n].num[y][x])
+				}
+			}
+			fmt.Println()
+		}
+		fmt.Println()
+	}
+
+	//Part1:
+	//compute board score of winner
+	proof := 0
+	for n := 0; n < amount_of_boards; n++ {
+		if boards[n].ranking == 1 {
+			for y := 0; y < 5; y++ {
+				for x := 0; x < 5; x++ {
+					if !boards[n].crossed[y][x] {
+						proof += boards[n].num[y][x]
 					}
 				}
 			}
-
-		}
-
-	}
-	// returns winner_index, winning_row_or_collum_index, last_called
-	return winner_index, winning_x, winning_y, last_called, new_winning_nums
-}
-
-//takes number and winning number, if number not part of winning number, return false
-//FIXME: winning nums need to STOP once there is a winner
-func marked(num string, winning_nums []string) bool {
-	for _, v := range winning_nums {
-		if v == num {
-			fmt.Println("MATCH FOUND checking num:", num, "against win", v)
-			return true
+			proof = proof * boards[n].last_called_with
 		}
 	}
-	return false
-}
-func main() {
-	INPUT_FILE := "data"
+	fmt.Println("(Part1) Proof of winning board is:", proof)
 
-	//get the input from file
-	winning_nums, board_amount, raw_input := input_handler_1(INPUT_FILE)
+	//Part2:
+	//find the board that wins last
 
-	//create 3 dimensional slice to store all the boards
-	//board_3d[board_index][y][x]
-	board_3d := make([][][]string, board_amount)
-	for a := range board_3d {
-		board_3d[a] = make([][]string, 5)
-		for b := range board_3d[a] {
-			board_3d[a][b] = make([]string, 5)
+	r := 0           //rank placeholder
+	last_index := -1 //index of last board
+	for n := 0; n < amount_of_boards; n++ {
+		if boards[n].ranking > r {
+			last_index = n
+			r = boards[n].ranking
 		}
-
 	}
 
-	//store the boards
-	board_3d = input_handler_2(board_3d, raw_input, board_amount)
-
-	//Solve the puzzle by checking the boards for each number that is called and returning all this stuff:
-	winner_index, winning_x, winning_y, last_called, new_winning_nums := solve(board_3d, winning_nums, board_amount)
-
-	//print fhe winning board
-	fmt.Println("Winning board:", winner_index+1)
-	for i := range board_3d[winner_index] {
-		fmt.Println(board_3d[winner_index][i])
-	}
-
-	// winner index is the right index
-	//compute the answer
-	fmt.Println(winning_nums)
-	var result int
+	//compute the proof for the last board
+	proof = 0 //reset the number from part1
 	for y := 0; y < 5; y++ {
 		for x := 0; x < 5; x++ {
-			if !(marked(board_3d[winner_index][y][x], new_winning_nums)) {
-				z, _ := strconv.Atoi(board_3d[winner_index][y][x])
-				result += z
+			if !boards[last_index].crossed[y][x] {
+				proof += boards[last_index].num[y][x]
 			}
 		}
 	}
+	proof = proof * boards[last_index].last_called_with
 
-	bla, _ := strconv.Atoi(last_called)
-	ANSWER := result * bla
-	fmt.Println("THE ANSWER :", ANSWER, "Last called: ", bla, "Board nums: ", result)
-	fmt.Println(winning_y, winning_x)
-
+	fmt.Println("(Part2) Proof of Last board is:", proof)
 }
