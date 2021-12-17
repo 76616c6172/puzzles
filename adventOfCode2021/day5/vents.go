@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"strconv"
 	"strings"
 )
 
@@ -26,33 +27,42 @@ func get_input(filename string) string {
 	return string(result)
 }
 
-func data_wrangler(input string) {
+// returns a slice of all the lines
+func data_wrangler(input string) []line {
 	line_amount := strings.Count(input, "\n") + 1
 	lines := make([]line, line_amount)
-	each_segment := strings.Split(input, "\n")
+	one_line := strings.Split(input, "\n")
 
-	// TODO: instead of just printing, store each point coordinate pair correctly in lines[] for each line
+	//Store each point coordinate pair correctly in lines[] for each line
 	for i := 0; i < line_amount; i++ {
-		b := strings.Split(each_segment[i], " -> ")
-		fmt.Println(b)
+		b := strings.Split(one_line[i], " -> ")
 		for z, v := range b {
 			point := strings.Split(v, ",")
-			if z == 0 {
-				fmt.Println("START:", point[0], point[1])
-			} else {
-				fmt.Println("END:", point[0], point[1])
+			if z == 0 { //this is the start of the line segment
+				x, _ := strconv.Atoi(point[0])
+				lines[i].start[0] = x
+				y, _ := strconv.Atoi(point[1])
+				lines[i].start[1] = y
+			} else { //this is the end of the line segment
+				x, _ := strconv.Atoi(point[0])
+				lines[i].end[0] = x
+				y, _ := strconv.Atoi(point[1])
+				lines[i].end[1] = y
 
 			}
 		}
 	}
-
-	fmt.Println(lines)
+	return lines
 }
 
 func main() {
 
-	filename := "example"
-	test := get_input(filename)
-	data_wrangler(test)
+	filename := "data"
+	input := get_input(filename)
+	lines := data_wrangler(input)
 
+	//print out all the stored lines
+	for i, v := range lines {
+		fmt.Println(i, v)
+	}
 }
