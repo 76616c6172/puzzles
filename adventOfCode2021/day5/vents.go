@@ -105,7 +105,6 @@ func main() {
 	for i, _ := range lines {
 		//draw vertical lines
 		if lines[i].x1 == lines[i].x2 {
-			fmt.Println("VERTICAL LINE:", lines[i])
 			y1 := lines[i].y1
 			y2 := lines[i].y2
 			for y := y2; y <= y1; y++ {
@@ -117,7 +116,6 @@ func main() {
 		}
 		//draw horizontal lines
 		if lines[i].y1 == lines[i].y2 {
-			fmt.Println("HORIZONTAL LINE:", lines[i])
 			x1 := lines[i].x1
 			x2 := lines[i].x2
 			for x := x2; x <= x1; x++ {
@@ -128,9 +126,18 @@ func main() {
 			}
 		}
 
-		//draw diagonal lines
-		for i, v := range diag_lines {
-			fmt.Println(i, v)
+		// FIXME: the problem is lines have any combination of:
+		// y1>y2 and y2>y1 and x1>x2 and x2>x1
+		// draw diagonal lines
+		for _, v := range diag_lines {
+			x1 := v.x1
+			x2 := v.x2
+			y := v.y1 //0
+			for x := x2; x <= x1; x++ {
+				points[y][x].count++
+				y++
+			}
+
 		}
 
 	}
