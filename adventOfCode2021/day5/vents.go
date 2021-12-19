@@ -61,7 +61,7 @@ func data_wrangler(input string) []line {
 }
 
 //Size of the SIZE by SIZE diagram
-const SIZE = 10
+const SIZE = 1000
 
 // return true if point is on line
 func is_one_line(x int, y int, line line) bool {
@@ -79,7 +79,7 @@ func is_one_line(x int, y int, line line) bool {
 
 func main() {
 
-	filename := "example"
+	filename := "data"
 	input := get_input(filename)
 
 	//hold all the lines from the input
@@ -142,16 +142,22 @@ func main() {
 	*/
 
 	fmt.Println()
-	//draw the board
+
+	//draw the board while calculating the answer
+	var count int
 	for y := 0; y < SIZE; y++ {
 		for x := 0; x < SIZE; x++ {
 			if points[y][x].count > 0 {
 				fmt.Printf("%d", points[y][x].count)
-			} else {
-				fmt.Printf(".")
+				if points[y][x].count > 1 {
+					count++
+				} else {
+					fmt.Printf(".")
+				}
 			}
+			fmt.Println()
 		}
-		fmt.Println()
-	}
 
+	}
+	fmt.Println("Part1 Answer: ", count)
 }
