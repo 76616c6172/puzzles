@@ -33,7 +33,7 @@ func get_input(filename string) string {
 }
 
 // returns a slice of all the lines
-func data_wrangler(input string) []line {
+func data_wrangler(input string) ([]line, int) {
 	line_amount := strings.Count(input, "\n") + 1
 	lines := make([]line, line_amount)
 	one_line := strings.Split(input, "\n")
@@ -57,11 +57,8 @@ func data_wrangler(input string) []line {
 			}
 		}
 	}
-	return lines
+	return lines, line_amount
 }
-
-//Size of the SIZE by SIZE diagram
-const SIZE = 1000
 
 // return true if point is on line
 func is_one_line(x int, y int, line line) bool {
@@ -77,19 +74,26 @@ func is_one_line(x int, y int, line line) bool {
 
 }
 
+//Size of the SIZE by SIZE diagram
+const SIZE = 10
+
 func main() {
 
-	filename := "data"
+	filename := "example"
 	input := get_input(filename)
 
 	//hold all the lines from the input
-	lines := data_wrangler(input)
+	lines, _ := data_wrangler(input)
 	//hold all the points in the diagram
 	points := make([][SIZE]point, SIZE)
+
+	//Part2: Create a slice to store all the diagonal lines
+	diag_lines := make([]line, 0)
 
 	//remove all the lines that aren't horizontal or vertical
 	for i := 0; i < len(lines); i++ {
 		if lines[i].x1 != lines[i].x2 && lines[i].y1 != lines[i].y2 {
+			diag_lines = append(diag_lines, lines[i]) //save the diag line
 			lines[i] = lines[len(lines)-1]
 			lines = lines[:len(lines)-1]
 			i--
@@ -124,22 +128,12 @@ func main() {
 			}
 		}
 
-	}
-	fmt.Println(lines)
-
-	/*
-		// FIXME: Find a simpler solution than checking each point vs all lines
-		// go through each point in the diagram and if it's one a line mark it with its counter
-		for y := 0; y < SIZE; y++ {
-			for x := 0; x < SIZE; x++ {
-				for _, line := range lines {
-					if is_one_line(x, y, line) {
-						points[y][x].count++
-					}
-				}
-			}
+		//draw diagonal lines
+		for i, v := range diag_lines {
+			fmt.Println(i, v)
 		}
-	*/
+
+	}
 
 	fmt.Println()
 
@@ -151,13 +145,14 @@ func main() {
 				fmt.Printf("%d", points[y][x].count)
 				if points[y][x].count > 1 {
 					count++
-				} else {
-					fmt.Printf(".")
 				}
+			} else {
+				fmt.Printf(".")
 			}
-			fmt.Println()
 		}
-
+		fmt.Println()
 	}
+
 	fmt.Println("Part1 Answer: ", count)
+	fmt.Println(diag_lines)
 }
