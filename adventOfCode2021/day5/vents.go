@@ -75,11 +75,11 @@ func is_one_line(x int, y int, line line) bool {
 }
 
 //Size of the SIZE by SIZE diagram
-const SIZE = 10
+const SIZE = 1000
 
 func main() {
 
-	filename := "example"
+	filename := "data"
 	input := get_input(filename)
 
 	//hold all the lines from the input
@@ -99,7 +99,6 @@ func main() {
 			i--
 		}
 	}
-	//TODO: simpler solution:
 	//iterate through every line
 	//update the board with every point of the line
 	for i, _ := range lines {
@@ -125,24 +124,34 @@ func main() {
 				points[lines[i].y2][x].count++
 			}
 		}
-
-		// FIXME: the problem is lines have any combination of:
-		// y1>y2 and y2>y1 and x1>x2 and x2>x1
-		// draw diagonal lines
-		for _, v := range diag_lines {
-			x1 := v.x1
-			x2 := v.x2
-			y := v.y1 //0
-			for x := x2; x <= x1; x++ {
-				points[y][x].count++
-				y++
-			}
-
-		}
-
 	}
 
-	fmt.Println()
+	//draw diagonal lines
+	for _, v := range diag_lines {
+		fmt.Println("start:", v.x1, v.y1)
+		fmt.Println("end:", v.x2, v.y2)
+		if v.y2 >= v.y1 {
+			x := v.x1
+			for y := v.y1; y <= v.y2; y++ {
+				slope := float64((v.y2 - v.y1)) / float64((v.x2 - v.x1))
+				points[y][x].count++
+				x += int(slope)
+
+			}
+		} else {
+			x := v.x1
+			for y := v.y1; y >= v.y2; y-- {
+				slope := float64((v.y2 - v.y1)) / float64((v.x2 - v.x1))
+				fmt.Println(y, slope)
+				fmt.Println("mark", x, y)
+				points[y][x].count++
+				x -= int(slope)
+
+			}
+		}
+
+		fmt.Println()
+	}
 
 	//draw the board while calculating the answer
 	var count int
@@ -160,6 +169,6 @@ func main() {
 		fmt.Println()
 	}
 
-	fmt.Println("Part1 Answer: ", count)
+	fmt.Println("Part2 Answer: ", count)
 	fmt.Println(diag_lines)
 }

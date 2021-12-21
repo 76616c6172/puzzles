@@ -111,6 +111,7 @@ func main() {
 			}
 		}
 	}
+
 	//print out the boards nicely:
 	for n := 0; n < amount_of_boards; n++ {
 		fmt.Printf("Board rank: %d\n", boards[n].ranking)
