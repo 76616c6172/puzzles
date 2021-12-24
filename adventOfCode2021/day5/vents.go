@@ -126,33 +126,6 @@ func main() {
 		}
 	}
 
-	//draw diagonal lines
-	for _, v := range diag_lines {
-		fmt.Println("start:", v.x1, v.y1)
-		fmt.Println("end:", v.x2, v.y2)
-		if v.y2 >= v.y1 {
-			x := v.x1
-			for y := v.y1; y <= v.y2; y++ {
-				slope := float64((v.y2 - v.y1)) / float64((v.x2 - v.x1))
-				points[y][x].count++
-				x += int(slope)
-
-			}
-		} else {
-			x := v.x1
-			for y := v.y1; y >= v.y2; y-- {
-				slope := float64((v.y2 - v.y1)) / float64((v.x2 - v.x1))
-				fmt.Println(y, slope)
-				fmt.Println("mark", x, y)
-				points[y][x].count++
-				x -= int(slope)
-
-			}
-		}
-
-		fmt.Println()
-	}
-
 	//draw the board while calculating the answer
 	var count int
 	for y := 0; y < SIZE; y++ {
@@ -169,6 +142,40 @@ func main() {
 		fmt.Println()
 	}
 
-	fmt.Println("Part2 Answer: ", count)
-	fmt.Println(diag_lines)
+	//draw diagonal lines
+	for _, v := range diag_lines {
+		if v.y2 >= v.y1 {
+			x := v.x1
+			for y := v.y1; y <= v.y2; y++ {
+				slope := float64((v.y2 - v.y1)) / float64((v.x2 - v.x1))
+				points[y][x].count++
+				x += int(slope)
+			}
+		} else {
+			x := v.x1
+			for y := v.y1; y >= v.y2; y-- {
+				slope := float64((v.y2 - v.y1)) / float64((v.x2 - v.x1))
+				points[y][x].count++
+				x -= int(slope)
+			}
+		}
+	}
+
+	//redraw the board with diagonal lines and calculating the answer for part2:
+	var count_part2 int
+	for y := 0; y < SIZE; y++ {
+		for x := 0; x < SIZE; x++ {
+			if points[y][x].count > 0 {
+				fmt.Printf("%d", points[y][x].count)
+				if points[y][x].count > 1 {
+					count_part2++
+				}
+			} else {
+				fmt.Printf(".")
+			}
+		}
+		fmt.Println()
+	}
+	fmt.Println("Part1 Answer: ", count)
+	fmt.Println("Part2 Answer: ", count_part2)
 }
