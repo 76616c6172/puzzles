@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+// Spits out a slice with the fishies
 func get_input(filename string) []int {
 	f, err := ioutil.ReadFile(filename)
 	if err != nil {
@@ -32,9 +33,8 @@ func main() {
 	const DAYS int = 80
 
 	fishies := get_input("data")
-	fmt.Println(fishies)
-	fmt.Println()
 
+	// Compute solution
 	for day := 0; day < DAYS; day++ {
 		fmt.Println("day", day, fishies)
 		for i := 0; i < len(fishies); i++ {
@@ -43,7 +43,6 @@ func main() {
 				fishies[i] = 6
 				fishies = append(fishies, 8+1)
 			}
-
 		}
 
 	}
