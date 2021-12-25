@@ -29,14 +29,10 @@ func get_input(filename string) []int {
 	return arr
 }
 
-func main() {
-	const DAYS int = 80
-
-	fishies := get_input("data")
-
+func solve(fishies []int, days int) int {
 	// Compute solution
-	for day := 0; day < DAYS; day++ {
-		fmt.Println("day", day, fishies)
+	for day := 0; day < days; day++ {
+		//fmt.Println("day", day, fishies)
 		for i := 0; i < len(fishies); i++ {
 			fishies[i]--
 			if fishies[i] < 0 {
@@ -44,8 +40,26 @@ func main() {
 				fishies = append(fishies, 8+1)
 			}
 		}
-
+		if day%32 == 0 {
+			fmt.Println("At day", day, "Fish:", len(fishies))
+		}
 	}
+	return len(fishies)
+}
 
-	fmt.Println("Part1 Answer:", len(fishies))
+func main() {
+	const DAYS_PART_ONE int = 80
+	const DAYS_PART_TWO int = 256
+
+	fishies := get_input("example")
+	fishies_part2 := make([]int, len(fishies))
+	copy(fishies_part2, fishies)
+
+	part1_answer := solve(fishies, DAYS_PART_ONE)
+	fmt.Println("Part1 Answer:", part1_answer)
+
+	// FIXME: Running out of memory, reduce memory consumption!?
+	part2_answer := solve(fishies_part2, DAYS_PART_TWO)
+	fmt.Println("Part2 Answer:", part2_answer)
+
 }
