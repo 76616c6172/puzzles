@@ -29,10 +29,9 @@ func get_input(filename string) []int {
 	return arr
 }
 
+// Computes solution
 func solve(fishies []int, days int) int {
-	// Compute solution
 	for day := 0; day < days; day++ {
-		//fmt.Println("day", day, fishies)
 		for i := 0; i < len(fishies); i++ {
 			fishies[i]--
 			if fishies[i] < 0 {
@@ -50,16 +49,40 @@ func solve(fishies []int, days int) int {
 func main() {
 	const DAYS_PART_ONE int = 80
 	const DAYS_PART_TWO int = 256
+	const INPUT_FILENAME string = "data"
 
-	fishies := get_input("example")
+	fishies := get_input(INPUT_FILENAME)
 	fishies_part2 := make([]int, len(fishies))
 	copy(fishies_part2, fishies)
 
 	part1_answer := solve(fishies, DAYS_PART_ONE)
 	fmt.Println("Part1 Answer:", part1_answer)
 
-	// FIXME: Running out of memory, reduce memory consumption!?
-	part2_answer := solve(fishies_part2, DAYS_PART_TWO)
-	fmt.Println("Part2 Answer:", part2_answer)
+	// PART TWO:
+	/*
+		part2_answer := solve(fishies_part2, DAYS_PART_TWO)
+		fmt.Println("Part2 Answer:", part2_answer)
+	*/
+
+	fish_map := make(map[int]int)
+	for _, v := range fishies_part2 {
+		fish_map[v]++
+	}
+
+	for day := 0; day < DAYS_PART_TWO; day++ {
+		fish_map[9] = fish_map[0]  //neccessary placeholder
+		fish_map[7] += fish_map[0] //the newly hatched fishies go on a 7 day timer that will become 6 after the loop
+		for i := 0; i < 9; i++ {
+			fish_map[i] = fish_map[i+1]
+		}
+		fish_map[9] = 0
+		//fmt.Println("day:", day+1, fish_map)
+	}
+
+	part2_answer := 0
+	for i := 0; i < 9; i++ {
+		part2_answer += fish_map[i]
+	}
+	fmt.Println("Part2: Answer:", part2_answer)
 
 }
