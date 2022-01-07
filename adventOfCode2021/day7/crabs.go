@@ -32,13 +32,9 @@ func input_handler(filename string) []int {
 	return crabs_arr
 }
 
-func main() {
-	filename := "input"
-
-	crabs_arr := input_handler(filename)
-
+func solve_part1(crabs_arr []int) int {
 	// ---
-	// Idk exactly how to solve this
+	// Idk exactly how to solve_part1 this
 	// Let's implement a naive approach trying alignment on every possible slot while calculating the fuel cost of each
 
 	// 1.) let's get the highest position a crab has
@@ -48,8 +44,8 @@ func main() {
 			highest = v
 		}
 	}
-	fmt.Println("Input data:", crabs_arr)
-	fmt.Println("Highest crab position:", highest)
+	//fmt.Println("Input data:", crabs_arr)
+	//fmt.Println("Highest crab position:", highest)
 
 	// 2.) Try to align on all possible positions and save the fuelcost
 
@@ -59,21 +55,21 @@ func main() {
 
 	fuelcost := 0
 	for i := 0; i < highest+1; i++ {
-		fmt.Println("Trying to align on:", i)
+		//fmt.Println("Trying to align on:", i)
 		for crab := 0; crab < len(crabs_arr); crab++ {
 
 			// Math happens here
 			fuel_delta := math.Abs(float64(i - crabs_arr[crab]))
-			fmt.Println(crabs_arr[crab], "costs", fuel_delta)
+			//fmt.Println(crabs_arr[crab], "costs", fuel_delta)
 			fuelcost += int(fuel_delta)
 		}
 		fueldata_m[i] += fuelcost
-		fmt.Println("Aligning on", i, "costs", fuelcost)
+		//fmt.Println("Aligning on", i, "costs", fuelcost)
 		fuelcost = 0 //reset for trying to align on next value
 	}
 
 	// Print the finished data from the brute force
-	fmt.Println(fueldata_m)
+	//fmt.Println(fueldata_m)
 
 	// 3.) Let's check which fuelcost is the smallest and print that as our answer
 	lowest_cost := 4294967295
@@ -82,7 +78,69 @@ func main() {
 			lowest_cost = v
 		}
 	}
+	return lowest_cost
+}
 
-	fmt.Println()
-	fmt.Println("Lowest fuelcost was:", lowest_cost)
+func solve_part2(crabs_arr []int) int {
+	// ---
+	// Idk exactly how to solve_part1 this
+	// Let's implement a naive approach trying alignment on every possible slot while calculating the fuel cost of each
+
+	// 1.) let's get the highest position a crab has
+	highest := 0
+	for _, v := range crabs_arr {
+		if v > highest {
+			highest = v
+		}
+	}
+	//fmt.Println("Input data:", crabs_arr)
+	//fmt.Println("Highest crab position:", highest)
+
+	// 2.) Try to align on all possible positions and save the fuelcost
+
+	// This map will hold the total fuelcost needed to align on every value in the format of
+	// fueldata_m[value_we_tried_to_align_on]total_fuel_cost
+	fueldata_m := make(map[int]int, 0)
+
+	fuelcost := 0
+	for i := 0; i < highest+1; i++ {
+		//fmt.Println("Trying to align on:", i)
+		for crab := 0; crab < len(crabs_arr); crab++ {
+
+			// Math happens here
+			fuel_delta := math.Abs(float64(i - crabs_arr[crab]))
+			//fmt.Println(crabs_arr[crab], "costs", fuel_delta)
+			// FIXME: Here for part2 this is no longer a single step calculation
+			fuelcost += int(fuel_delta)
+		}
+		fueldata_m[i] += fuelcost
+		//fmt.Println("Aligning on", i, "costs", fuelcost)
+		fuelcost = 0 //reset for trying to align on next value
+	}
+
+	// Print the finished data from the brute force
+	//fmt.Println(fueldata_m)
+
+	// 3.) Let's check which fuelcost is the smallest and print that as our answer
+	lowest_cost := 4294967295
+	for _, v := range fueldata_m {
+		if v < lowest_cost {
+			lowest_cost = v
+		}
+	}
+	return lowest_cost
+}
+
+func main() {
+	filename := "example"
+
+	// Wrangle data
+	crabs_arr := input_handler(filename)
+
+	// Solve part1
+	p1_answer := solve_part1(crabs_arr)
+	fmt.Println("Part1, lowest fuelcost is:", p1_answer)
+
+	p2_answer := solve_part2(crabs_arr)
+	fmt.Println("Part2, lowest fuelcost is:", p2_answer)
 }
