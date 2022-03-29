@@ -11,8 +11,7 @@ import "fmt"
 //	f bool
 //	g bool
 //}
-var numberedDisplay = map[string]bool{
-	"a": false, "b": false, "c": false, "d": false, "e": false, "f": false, "g": false}
+//var numberedDisplay = map[string]bool{ "a": false, "b": false, "c": false, "d": false, "e": false, "f": false, "g": false}
 
 // var employee = map[string]int{"Mark": 10, "Sandy": 20}
 
@@ -88,7 +87,19 @@ func render_display(displays [10]map[string]bool) {
 // Solution for AoC2021 day8 problem: Seven segment search
 func main() {
 
-	var numberedDisplay = [10]map[string]bool{}
+	// Create data structures
+	var numberedDisplay [10]map[string]bool
+	for i := 0; i < 10; i++ { // Allocate memory to the maps
+		numberedDisplay[i] = make(map[string]bool, 7)
+	}
+
+	// Set all segments of all displays on for fun
+	var letters = []string{"a", "b", "c", "d", "e", "f", "g"}
+	for i := 0; i < 10; i++ { // Allocate memory to the maps
+		for _, l := range letters {
+			numberedDisplay[i][l] = true
+		}
+	}
 
 	render_display(numberedDisplay)
 
