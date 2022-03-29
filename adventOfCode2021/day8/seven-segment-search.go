@@ -1,6 +1,13 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"log"
+	"os"
+	"strings"
+)
+
+var numberedDisplay [10]map[string]bool
 
 //type segment struct {
 //	a bool
@@ -84,14 +91,60 @@ func render_display(displays [10]map[string]bool) {
 	render_horizontal_segments(displays, "g")    // Render the g segments
 }
 
+func data_wrangler(filename string) {
+	f, err := os.ReadFile(filename)
+	if err != nil {
+		log.Println(err)
+		os.Exit(1)
+	}
+
+	// Just for fun let's read the first line, parse it, and display that on the seven segment clock
+	s := string(f)
+	s1 := strings.SplitAfter(s, "|")
+	for lineNumber := 0; lineNumber < 10; lineNumber++ {
+
+		s2 := strings.TrimRight(s1[lineNumber], "|")
+		s3 := strings.Fields(s2)
+
+		counter := 0
+		for _, b := range s3 {
+			if counter == 10 {
+				break
+			}
+			for _, c := range b {
+				seg := string(c)
+				numberedDisplay[counter][seg] = true
+			}
+			counter++ //Jumping to the next numbered display
+		}
+		render_display(numberedDisplay)
+		//fixme: reset the display to be rendered back to off
+		// Set all segments of all displays on for fun
+		display_off(numberedDisplay)
+	}
+}
+
+// Resets the state of the seven segment displays back to off
+func display_off(numberedDisplay [10]map[string]bool) {
+	var letters = []string{"a", "b", "c", "d", "e", "f", "g"}
+	for i := 0; i < 10; i++ { // Allocate memory to the maps
+		for _, l := range letters {
+			numberedDisplay[i][l] = false
+		}
+	}
+}
+
 // Solution for AoC2021 day8 problem: Seven segment search
 func main() {
 
 	// Create data structures
-	var numberedDisplay [10]map[string]bool
 	for i := 0; i < 10; i++ { // Allocate memory to the maps
 		numberedDisplay[i] = make(map[string]bool, 7)
 	}
+
+	render_display(numberedDisplay)
+	// Just for fun read in the first setting and display it
+	data_wrangler("example")
 
 	// Set all segments of all displays on for fun
 	var letters = []string{"a", "b", "c", "d", "e", "f", "g"}
@@ -100,7 +153,5 @@ func main() {
 			numberedDisplay[i][l] = true
 		}
 	}
-
-	render_display(numberedDisplay)
 
 }
