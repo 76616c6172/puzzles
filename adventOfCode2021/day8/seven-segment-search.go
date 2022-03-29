@@ -2,17 +2,19 @@ package main
 
 import "fmt"
 
-type segment struct {
-	a bool
-	b bool
-	c bool
-	d bool
-	e bool
-	f bool
-	g bool
-}
+//type segment struct {
+//	a bool
+//	b bool
+//	c bool
+//	d bool
+//	e bool
+//	f bool
+//	g bool
+//}
+var numberedDisplay = map[string]bool{
+	"a": false, "b": false, "c": false, "d": false, "e": false, "f": false, "g": false}
 
-var numberedDisplays [10]segment
+// var employee = map[string]int{"Mark": 10, "Sandy": 20}
 
 // 0:      1:      2:      3:      4:
 // aaaa    ....    aaaa    aaaa    ....
@@ -34,10 +36,10 @@ var numberedDisplays [10]segment
 //
 
 // Prints the first line to stdout (a segments)
-func render_horizontal_segments() {
+func render_horizontal_segments(display [10]map[string]bool, segment string) {
 	lineContent := " "
-	for segment := 0; segment < 10; segment++ {
-		if numberedDisplays[segment].a {
+	for displayNum := 0; displayNum < 10; displayNum++ {
+		if display[displayNum][segment] {
 			lineContent += "####    "
 		} else {
 			lineContent += "....    "
@@ -48,20 +50,20 @@ func render_horizontal_segments() {
 }
 
 // renders b,c,d,f segments
-func render_vertical_segments() {
+func render_vertical_segments(display [10]map[string]bool, firstSegment string, secondSegment string) {
 	lineContent := ""
-	for segment := 0; segment < 10; segment++ {
+	for displayNum := 0; displayNum < 10; displayNum++ {
 
-		if numberedDisplays[segment].b {
+		if display[displayNum][firstSegment] {
 			lineContent += "#    "
-			if numberedDisplays[segment].c {
+			if display[displayNum][secondSegment] {
 				lineContent += "#  "
 			} else {
 				lineContent += ".  "
 			}
 		} else {
 			lineContent += ".    "
-			if numberedDisplays[segment].c {
+			if display[displayNum][secondSegment] {
 				lineContent += "#  "
 			} else {
 				lineContent += ".  "
@@ -74,29 +76,20 @@ func render_vertical_segments() {
 }
 
 // Renders out the seven segment display in stdout
-func render_display() {
+func render_display(displays [10]map[string]bool) {
 	fmt.Println("0:      1:      2:      3:      4:      5:      6:      7:      8:      9:")
-	render_horizontal_segments() // Render the a segments
-	render_vertical_segments()   // render b and c segments
-	render_horizontal_segments() // Render the d segments
-	render_vertical_segments()   // render e and f segments
-	render_horizontal_segments() // Render the g segments
+	render_horizontal_segments(displays, "a")    // Render the a segments
+	render_vertical_segments(displays, "b", "c") // render b and c segments
+	render_horizontal_segments(displays, "d")    // Render the d segments
+	render_vertical_segments(displays, "e", "f") // render e and f segments
+	render_horizontal_segments(displays, "g")    // Render the g segments
 }
 
 // Solution for AoC2021 day8 problem: Seven segment search
 func main() {
 
-	// Turn all segments for testing
-	//	for i, _ := range numberedDisplays {
-	//		numberedDisplays[i].a = true
-	//		numberedDisplays[i].b = true
-	//		numberedDisplays[i].c = true
-	//		numberedDisplays[i].d = true
-	//		numberedDisplays[i].e = true
-	//		numberedDisplays[i].f = true
-	//		numberedDisplays[i].g = true
-	//	}
-	//
-	render_display()
+	var numberedDisplay = [10]map[string]bool{}
+
+	render_display(numberedDisplay)
 
 }
