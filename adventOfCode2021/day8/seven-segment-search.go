@@ -1,12 +1,14 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"log"
 	"os"
 	"strings"
 )
 
+// Each one of the 10 elements representss one seven segmented display
 var numberedDisplay [10]map[string]bool
 
 //type segment struct {
@@ -91,37 +93,35 @@ func render_display(displays [10]map[string]bool) {
 	render_horizontal_segments(displays, "g")    // Render the g segments
 }
 
-func data_wrangler(filename string) {
-	f, err := os.ReadFile(filename)
+// Builds and then returns a 2 dimensional array of the puzzle input
+// Expects the input to the puzzle in the format:
+//
+//cdbga acbde eacdfbg adbgf gdebcf bcg decabf cg ebdgac egca | geac ceag faedcb cg
+//edbcfag ebdca ebgad dagbef cfbed adcg dcgeab ac cae cgabef | gacd ac dgac ebdfc
+//gceafb fcabedg ebfd bd ebacf bafcde daecbg dabfc abd acfgd | adb fagdc bd agfbec
+//abd cebd bd gcbaf dcafb dface ecgfbda ecdfba fdegca dbafeg | dbecfag bd decb dbgfcea
+//ecdagfb eb egfcb gcdbfa dcfeg aecb fabcg afebgd ebg agecbf | bge be abcfge bfedacg
+func data_wrangler(filename string) [][2]string {
+	var output [][2]string
+
+	file, err := os.Open(filename)
 	if err != nil {
-		log.Println(err)
-		os.Exit(1)
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		var z [2]string
+		line := scanner.Text()
+		splitInput := strings.Split(line, " | ")
+		z[0] = splitInput[0]
+		z[1] = splitInput[1]
+
+		output = append(output, z)
 	}
 
-	// Just for fun let's read the first line, parse it, and display that on the seven segment clock
-	s := string(f)
-	s1 := strings.SplitAfter(s, "|")
-	for lineNumber := 0; lineNumber < 10; lineNumber++ {
-
-		s2 := strings.TrimRight(s1[lineNumber], "|")
-		s3 := strings.Fields(s2)
-
-		counter := 0
-		for _, b := range s3 {
-			if counter == 10 {
-				break
-			}
-			for _, c := range b {
-				seg := string(c)
-				numberedDisplay[counter][seg] = true
-			}
-			counter++ //Jumping to the next numbered display
-		}
-		render_display(numberedDisplay)
-		//fixme: reset the display to be rendered back to off
-		// Set all segments of all displays on for fun
-		display_off(numberedDisplay)
-	}
+	return output
 }
 
 // Resets the state of the seven segment displays back to off
@@ -134,6 +134,26 @@ func display_off(numberedDisplay [10]map[string]bool) {
 	}
 }
 
+// Takes as input the amount of segments turned on and prints out the possible displays
+func XX(n int) {
+	switch n {
+	case 2:
+		fmt.Println("number is 1 CF")
+	case 3:
+		fmt.Println("number is 7 ACF")
+	case 4:
+		fmt.Println("number is 4 BCDF")
+	case 5:
+		fmt.Println("number is 2 ACDEG, 3ACDFG, or 5ABDFG")
+	case 6:
+		fmt.Println("number is 0 ABCEFG, 6 BDEFG, or 9 ABCDFG")
+	case 7:
+		fmt.Println("number is 8 ABCDEFG")
+	}
+}
+
+var puzzleInput [][2]string
+
 // Solution for AoC2021 day8 problem: Seven segment search
 func main() {
 
@@ -143,8 +163,12 @@ func main() {
 	}
 
 	render_display(numberedDisplay)
-	// Just for fun read in the first setting and display it
-	data_wrangler("example")
+
+	// Read in the data
+	puzzleInput = data_wrangler("example")
+
+	// Testing output
+	fmt.Println(puzzleInput[0][1])
 
 	// Set all segments of all displays on for fun
 	var letters = []string{"a", "b", "c", "d", "e", "f", "g"}
