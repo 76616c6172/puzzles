@@ -8,8 +8,11 @@ import (
 	"strings"
 )
 
-// Each one of the 10 elements representss one seven segmented display
-var numberedDisplay [10]map[string]bool
+var numberedDisplay [10]map[string]bool // Each one of the 10 elements representss one seven segmented display
+var puzzleInput [][2]string             // Holds the data of the puzzle
+const DISPLAY_AMOUNT int = 10
+
+var easyDigitCounter int = 0 // Counts the easy digits from the input data
 
 //type segment struct {
 //	a bool
@@ -112,20 +115,32 @@ func data_wrangler(filename string) [][2]string {
 
 	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
-		var z [2]string
+		var splitLine [2]string
 		line := scanner.Text()
 		splitInput := strings.Split(line, " | ")
-		z[0] = splitInput[0]
-		z[1] = splitInput[1]
+		splitLine[0] = splitInput[0]
+		splitLine[1] = splitInput[1]
 
-		output = append(output, z)
+		output = append(output, splitLine)
 	}
 
 	return output
 }
 
+// Set all segments of all displays on for fun
+func display_on() {
+
+	var letters = []string{"a", "b", "c", "d", "e", "f", "g"}
+	for i := 0; i < 10; i++ { // Allocate memory to the maps
+		for _, l := range letters {
+			numberedDisplay[i][l] = true
+		}
+	}
+
+}
+
 // Resets the state of the seven segment displays back to off
-func display_off(numberedDisplay [10]map[string]bool) {
+func display_off() {
 	var letters = []string{"a", "b", "c", "d", "e", "f", "g"}
 	for i := 0; i < 10; i++ { // Allocate memory to the maps
 		for _, l := range letters {
@@ -135,47 +150,63 @@ func display_off(numberedDisplay [10]map[string]bool) {
 }
 
 // Takes as input the amount of segments turned on and prints out the possible displays
-func XX(n int) {
+func parsePatternLength(n int) {
 	switch n {
-	case 2:
-		fmt.Println("number is 1 CF")
-	case 3:
-		fmt.Println("number is 7 ACF")
-	case 4:
-		fmt.Println("number is 4 BCDF")
+	case 2: //fmt.Println("number is 1 CF")
+		easyDigitCounter++
+	case 3: //fmt.Println("number is 7 ACF")
+		easyDigitCounter++
+	case 4: //fmt.Println("number is 4 BCDF")
+		easyDigitCounter++
 	case 5:
-		fmt.Println("number is 2 ACDEG, 3ACDFG, or 5ABDFG")
+		//fmt.Println("number is 2 ACDEG, 3ACDFG, or 5ABDFG")
 	case 6:
-		fmt.Println("number is 0 ABCEFG, 6 BDEFG, or 9 ABCDFG")
-	case 7:
-		fmt.Println("number is 8 ABCDEFG")
+		//fmt.Println("number is 0 ABCEFG, 6 BDEFG, or 9 ABCDFG")
+	case 7: //fmt.Println("number is 8 ABCDEFG")
+		easyDigitCounter++
 	}
 }
 
-var puzzleInput [][2]string
+// Solves part one of the puzzle and prints the solution
+func solve_part_one() {
+	for _, line := range puzzleInput {
+		//signalPattern := strings.Fields(line[0])
+		outputValue := strings.Fields(line[1])
+
+		/*
+			// Parse each wrong display pattern in the signal pattern
+			for _, str := range signalPattern {
+				fmt.Println("Parsing: ", str)
+				parsePatternLength(len(str))
+			}
+		*/
+
+		// Parse each wrong display pattern in the output value
+		for _, str := range outputValue {
+			fmt.Println("Parsing: ", str)
+			parsePatternLength(len(str))
+		}
+	}
+
+	fmt.Println("Answer to part one is:", easyDigitCounter)
+}
 
 // Solution for AoC2021 day8 problem: Seven segment search
 func main() {
 
 	// Create data structures
-	for i := 0; i < 10; i++ { // Allocate memory to the maps
+	for i := 0; i < DISPLAY_AMOUNT; i++ { // Allocate memory to the maps
 		numberedDisplay[i] = make(map[string]bool, 7)
 	}
 
+	// Render the display, just for fun
 	render_display(numberedDisplay)
 
 	// Read in the data
-	puzzleInput = data_wrangler("example")
+	puzzleInput = data_wrangler("input")
 
 	// Testing output
-	fmt.Println(puzzleInput[0][1])
-
-	// Set all segments of all displays on for fun
-	var letters = []string{"a", "b", "c", "d", "e", "f", "g"}
-	for i := 0; i < 10; i++ { // Allocate memory to the maps
-		for _, l := range letters {
-			numberedDisplay[i][l] = true
-		}
-	}
+	//fmt.Println(puzzleInput[0][1])
+	solve_part_one()
 
 }
