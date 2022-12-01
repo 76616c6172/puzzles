@@ -6,21 +6,21 @@ import (
 
 func Test_solve_day1(t *testing.T) {
 	path := "./puzzle-inputs/day-1-example-1"
-	testCase := getPuzzleInputFromFile(path)
+	testcase := get_input(path)
 
-	t.Run("Finding the highest calorie elf and adding up his calories", func(t *testing.T) {
+	t.Run("Finding highest calorie elf & adding up calories", func(t *testing.T) {
 		want := 24000
-		got := getMostCarriedCalories(testCase)
+		got := getHighestCalories(testcase)
 
 		if got != want {
 			t.Errorf("\n got: %v\nwant: %v", got, want)
 		}
 	})
 
-	t.Run("Getting the top 3 calorie elves and adding up their calories", func(t *testing.T) {
+	t.Run("Getting  top 3 calorie elves & adding up calories", func(t *testing.T) {
 		want := 45000
-		testCase := getPuzzleInputFromFile(path)
-		got := getSumOfTopThreeCalorieCarriers(testCase)
+		testcase := get_input(path)
+		got := addTop3Calories(testcase)
 
 		if got != want {
 			t.Errorf("\n got: %v\nwant: %v", got, want)

@@ -7,62 +7,59 @@ import (
 	"strings"
 )
 
-func solve_day1() {
-	filePath := "puzzle-inputs/day-1-part-1"
-	input := getPuzzleInputFromFile(filePath)
+func getHighestCalories(s string) int {
+	caloriesList := strings.Split(s, "\n")
 
-	output := getMostCarriedCalories(input)
-	fmt.Println("Day 1: Calorie Counting =", output)
+	var highestCalorieNum int
+	var currentElfCalories int
 
-	output = getSumOfTopThreeCalorieCarriers(input)
-	fmt.Println("--- Part Two --- =", output)
-	fmt.Println()
-}
-
-func getMostCarriedCalories(s string) int {
-	listSeparatedByNewlines := strings.Split(s, "\n")
-
-	var highestNumberOfCalories int
-	var calsCurrentElf int
-
-	for _, line := range listSeparatedByNewlines {
-		if line != "" {
-			numberOfCaloriesInCurrentLine, err := strconv.Atoi(line)
+	for _, calories := range caloriesList {
+		if calories != "" {
+			calorieNum, err := strconv.Atoi(calories)
 			if err != nil {
 				panic(err)
 			}
-			calsCurrentElf += numberOfCaloriesInCurrentLine
+			currentElfCalories += calorieNum
 		} else {
-			if calsCurrentElf > highestNumberOfCalories {
-				highestNumberOfCalories = calsCurrentElf
+			if currentElfCalories > highestCalorieNum {
+				highestCalorieNum = currentElfCalories
 			}
-			calsCurrentElf = 0
+			currentElfCalories = 0
 		}
 	}
 
-	return highestNumberOfCalories
+	return highestCalorieNum
 }
 
-func getSumOfTopThreeCalorieCarriers(s string) int {
-	listSeparatedByNewlines := strings.Split(s, "\n")
+func addTop3Calories(s string) int {
+	caloriesList := strings.Split(s, "\n")
 
-	var calsCurrentElf int
-	var listOfCaloriesPerElf []int
+	var currentElfCalories int
+	var caloriesPerElf []int
 
-	for _, line := range listSeparatedByNewlines {
-		if line != "" {
-			numberOfCaloriesInCurrentLine, _ := strconv.Atoi(line)
-			calsCurrentElf += numberOfCaloriesInCurrentLine
+	for _, calorie := range caloriesList {
+		if calorie != "" {
+			calorieNum, _ := strconv.Atoi(calorie)
+			currentElfCalories += calorieNum
 		} else {
-			listOfCaloriesPerElf = append(listOfCaloriesPerElf, calsCurrentElf)
-			calsCurrentElf = 0
+			caloriesPerElf = append(caloriesPerElf, currentElfCalories)
+			currentElfCalories = 0
 		}
 	}
 
-	sort.Ints(listOfCaloriesPerElf)
+	sort.Ints(caloriesPerElf)
+
 	var sum int
 	for i := 3; i > 0; i-- {
-		sum += listOfCaloriesPerElf[len(listOfCaloriesPerElf)-i]
+		sum += caloriesPerElf[len(caloriesPerElf)-i]
 	}
+
 	return sum
+}
+
+func solve_day1() {
+	filepath := "puzzle-inputs/day-1-part-1"
+	input := get_input(filepath)
+	fmt.Println("Day 1: Calorie Counting =", getHighestCalories(input))
+	fmt.Println("Day 1: Part Two =", addTop3Calories(input))
 }
