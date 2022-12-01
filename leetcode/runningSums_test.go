@@ -8,18 +8,18 @@ import (
 // TestRunningSums is a unit test for the function runningSums
 func TestRunningSums(t *testing.T) {
 	testCases := [][]int{
-		[]int{
+		{
 			1, 2, 3, 4,
 		},
-		[]int{
+		{
 			1, 1, 1, 1, 1,
 		},
 	}
 	expectedOutputs := [][]int{
-		[]int{
+		{
 			1, 3, 6, 10,
 		},
-		[]int{
+		{
 			1, 2, 3, 4, 5,
 		},
 	}

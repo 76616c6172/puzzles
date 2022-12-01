@@ -4,9 +4,9 @@ import "testing"
 
 func TestGetPivotIndex(t *testing.T) {
 	testCases := [][]int{
-		[]int{1, 7, 3, 6, 5, 6},
-		[]int{1, 2, 3},
-		[]int{2, 1, -1},
+		{1, 7, 3, 6, 5, 6},
+		{1, 2, 3},
+		{2, 1, -1},
 	}
 	solUtions := []int{
 		3,
