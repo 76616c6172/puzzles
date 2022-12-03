@@ -34,7 +34,7 @@ var outcomeScore = map[byte]int{
 	'Z': WIN,
 }
 
-var pointsGivenForMyShape = map[byte]int{
+var pointsGivenMyShape = map[byte]int{
 	'R': 1, // rock
 	'P': 2, // paper
 	'S': 3, // scissors
@@ -68,7 +68,7 @@ func re_encode_input_data(s string) string {
 	return s
 }
 
-func re_encode_their_shape_selection(s string) string {
+func re_encode_only_their_shape_selection(s string) string {
 	s = strings.ReplaceAll(s, "A", "R")
 	s = strings.ReplaceAll(s, "B", "P")
 	s = strings.ReplaceAll(s, "C", "S")
@@ -89,7 +89,7 @@ func getScoreFromOutCome(s string) int {
 func getScoreFromMyShape(s string) int {
 	var score int
 	myInput := (s[2])
-	score += pointsGivenForMyShape[myInput]
+	score += pointsGivenMyShape[myInput]
 
 	return score
 }
@@ -105,6 +105,7 @@ func calculateScore(s string) int {
 
 	return score
 }
+
 func pointsFromMyShapeSelection(g string, n int) int {
 	theirShape := g[0]
 
@@ -145,7 +146,7 @@ func pointsFromMyShapeSelection(g string, n int) int {
 }
 
 func calculateScore_part2(s string) int {
-	data := re_encode_their_shape_selection(s)
+	data := re_encode_only_their_shape_selection(s)
 	gamesequence := strings.Split(data, "\n")
 
 	var score int
