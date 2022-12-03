@@ -17,4 +17,5 @@ func get_input(path string) string {
 func main() {
 	fmt.Println("running main..")
 	solve_day1()
+	solve_day2()
 }

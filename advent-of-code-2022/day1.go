@@ -58,7 +58,7 @@ func addTop3Calories(s string) int {
 }
 
 func solve_day1() {
-	filepath := "puzzle-inputs/day-1-part-1"
+	filepath := "puzzle-inputs/day1-part1"
 	input := get_input(filepath)
 	fmt.Println("Day 1: Calorie Counting =", getHighestCalories(input))
 	fmt.Println("Day 1: Part Two =", addTop3Calories(input))

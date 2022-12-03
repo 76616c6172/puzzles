@@ -5,7 +5,7 @@ import (
 )
 
 func Test_solve_day1(t *testing.T) {
-	path := "./puzzle-inputs/day-1-example-1"
+	path := "./puzzle-inputs/day1-example1"
 	testcase := get_input(path)
 
 	t.Run("Finding highest calorie elf & adding up calories", func(t *testing.T) {
