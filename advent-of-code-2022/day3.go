@@ -7,23 +7,21 @@ import (
 )
 
 func findCommonChar(s1 string, s2 string, s3 string) (rune, error) {
-
 	for _, char := range s1 {
 
-		// Only comparing 2 strings
+		// If comparing 2 strings
 		if len(s3) < 2 {
 			if strings.Count(s2, string(char)) > 0 {
 				return char, nil
 			}
 		}
 
-		// Comparing 3 strings
+		// if comparing 3 strings
 		if strings.Count(s2, string(char)) > 0 && strings.Count(s3, string(char)) > 0 {
 			return char, nil
 		}
-
 	}
-	// If no common character is found, return an empty string
+
 	return ' ', errors.New("no common character found")
 }
 
@@ -38,46 +36,47 @@ func getItemPriority(r rune) int {
 }
 
 func solveDay3Part1(s string) int {
-	rucksackList := strings.Split(s, "\n")
+	sackList := strings.Split(s, "\n")
 
-	var sum int
-	for _, sack := range rucksackList {
-		half := len(sack) / 2
-		c1 := sack[:half]
-		c2 := sack[half:]
+	var itemPrioritySum int
+	for _, sack := range sackList {
+		middleIndex := len(sack) / 2
 
-		commonItem, err := findCommonChar(c1, c2, "")
+		compartment1 := sack[:middleIndex]
+		compartment2 := sack[middleIndex:]
+
+		commonItem, err := findCommonChar(compartment1, compartment2, "")
 		if err != nil {
 			panic(err)
 		}
 
-		sum += getItemPriority(commonItem)
+		itemPrioritySum += getItemPriority(commonItem)
 	}
 
-	return sum
+	return itemPrioritySum
 }
 
 func solveDay3Part2(s string) int {
-	rucksackList := strings.Split(s, "\n")
+	sackList := strings.Split(s, "\n")
 
-	var sum, counter int
-	for i := range rucksackList {
-		counter++
+	var itemPrioritySum, sackCounter int
+	for i := range sackList {
+		sackCounter++
 
 		// Every three rucksacks find the common item in the last three sacks including the current one
-		if counter == 3 {
-			counter = 0
-			commonItem, err := findCommonChar(rucksackList[i], rucksackList[i-1], rucksackList[i-2])
+		if sackCounter == 3 {
+			sackCounter = 0
+			commonItem, err := findCommonChar(sackList[i], sackList[i-1], sackList[i-2])
 			if err != nil {
 				panic(err)
 			}
 
-			sum += getItemPriority(commonItem)
+			itemPrioritySum += getItemPriority(commonItem)
 		}
 
 	}
 
-	return sum
+	return itemPrioritySum
 }
 
 func solve_day3() {
