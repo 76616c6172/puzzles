@@ -160,7 +160,7 @@ func calculateScore_part2(s string) int {
 }
 
 func solve_day2() {
-	filepath := "puzzle-inputs/day2-part1"
+	filepath := "puzzle-inputs/day2-input"
 	input := get_input(filepath)
 	score := calculateScore(input)
 	score2 := calculateScore_part2(input)

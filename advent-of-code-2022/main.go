@@ -18,4 +18,5 @@ func main() {
 	fmt.Println("running main..")
 	solve_day1()
 	solve_day2()
+	solve_day3()
 }
