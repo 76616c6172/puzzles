@@ -36,8 +36,42 @@ func create_assignment_pairs(s string) [][2][2]int {
 	return assignmentPairs
 }
 
-func doesFullyContainRange(minA, maxA, minB, maxB int) bool {
-	return (minA <= minB && maxB <= maxA) || (minB <= minA && maxA <= maxB)
+func doesFullyContainRange(startA, endA, startB, endB int) bool {
+	return (startA <= startB && endB <= endA) || (startB <= startA && endA <= endB)
+}
+
+// in checks if the needle is contained in thehaystack
+func doesExistInRange(needle int, haystack []int) bool {
+	for _, element := range haystack {
+		if element == needle {
+			return true
+		}
+	}
+	return false
+}
+
+// doesPartiallyOverlap checks if any numbers in the intervallA are also in intervallB
+// rangeA := []int{2, 4}
+// rangeB := []int{3, 4}
+func doesPartiallyOverlap(startA, endA, startB, endB int) bool {
+
+	var rangeA []int
+	for i := startA; i <= endA; i++ {
+		rangeA = append(rangeA, i)
+	}
+
+	var rangeB []int
+	for i := startB; i <= endB; i++ {
+		rangeB = append(rangeB, i)
+	}
+
+	for _, num := range rangeA {
+		if doesExistInRange(num, rangeB) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func solveDay4Part1(s string) int {
@@ -53,11 +87,23 @@ func solveDay4Part1(s string) int {
 	return count
 }
 
+func solveDay4Part2(s string) int {
+	data := create_assignment_pairs(s)
+	var count int
+
+	for i := range data {
+		if doesPartiallyOverlap(data[i][0][0], data[i][0][1], data[i][1][0], data[i][1][1]) {
+			count++
+		}
+	}
+	return count
+}
+
 func solve_day4() {
 	filepath := "puzzle-inputs/day4-input"
 	input := get_input(filepath)
 	solution1 := solveDay4Part1(input)
-	solution2 := 0
+	solution2 := solveDay4Part2(input)
 	fmt.Println("Day 4: Camp Cleanup =", solution1)
 	fmt.Println("Day 4: Part Two =", solution2)
 }
