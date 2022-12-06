@@ -19,4 +19,5 @@ func main() {
 	solve_day1()
 	solve_day2()
 	solve_day3()
+	solve_day4()
 }
