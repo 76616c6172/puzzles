@@ -33,10 +33,8 @@ func getHighestCalories(s string) int {
 
 func addTop3Calories(s string) int {
 	caloriesList := strings.Split(s, "\n")
-
 	var currentElfCalories int
 	var caloriesPerElf []int
-
 	for _, calorie := range caloriesList {
 		if calorie != "" {
 			calorieNum, _ := strconv.Atoi(calorie)
@@ -46,14 +44,11 @@ func addTop3Calories(s string) int {
 			currentElfCalories = 0
 		}
 	}
-
 	sort.Ints(caloriesPerElf)
-
 	var sum int
 	for i := 3; i > 0; i-- {
 		sum += caloriesPerElf[len(caloriesPerElf)-i]
 	}
-
 	return sum
 }
 

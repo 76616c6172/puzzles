@@ -60,11 +60,9 @@ func re_encode_input_data(s string) string {
 	s = strings.ReplaceAll(s, "A", "R")
 	s = strings.ReplaceAll(s, "B", "P")
 	s = strings.ReplaceAll(s, "C", "S")
-
 	s = strings.ReplaceAll(s, "X", "R")
 	s = strings.ReplaceAll(s, "Y", "P")
 	s = strings.ReplaceAll(s, "Z", "S")
-
 	return s
 }
 
@@ -72,7 +70,6 @@ func re_encode_only_their_shape_selection(s string) string {
 	s = strings.ReplaceAll(s, "A", "R")
 	s = strings.ReplaceAll(s, "B", "P")
 	s = strings.ReplaceAll(s, "C", "S")
-
 	return s
 }
 
@@ -82,7 +79,6 @@ func getScoreFromOutCome(s string) int {
 	myInput := (s[2])
 	key := string(theirInput) + string(myInput)
 	score += pointsGivenForOutcome[key]
-
 	return score
 }
 
@@ -90,28 +86,23 @@ func getScoreFromMyShape(s string) int {
 	var score int
 	myInput := (s[2])
 	score += pointsGivenMyShape[myInput]
-
 	return score
 }
 
 func calculateScore(s string) int {
 	sensiblyEncodedData := re_encode_input_data(s)
 	gamesequence := strings.Split(sensiblyEncodedData, "\n")
-
 	var score int
 	for _, game := range gamesequence {
 		score += getScoreFromMyShape(game) + getScoreFromOutCome(game)
 	}
-
 	return score
 }
 
 func pointsFromMyShapeSelection(g string, n int) int {
 	theirShape := g[0]
-
 	switch n {
 	case LOSS:
-
 		if theirShape == 'R' {
 			return POINTS_FOR_MY_SCISSORS
 		} else if theirShape == 'P' {
@@ -119,9 +110,7 @@ func pointsFromMyShapeSelection(g string, n int) int {
 		} else {
 			return POINTS_FOR_MY_PAPER
 		}
-
 	case DRAW:
-
 		if theirShape == 'R' {
 			return POINTS_FOR_MY_ROCK
 		} else if theirShape == 'P' {
@@ -129,9 +118,7 @@ func pointsFromMyShapeSelection(g string, n int) int {
 		} else {
 			return POINTS_FOR_MY_SCISSORS
 		}
-
 	case WIN:
-
 		if theirShape == 'R' {
 			return POINTS_FOR_MY_PAPER
 		} else if theirShape == 'P' {
@@ -139,23 +126,18 @@ func pointsFromMyShapeSelection(g string, n int) int {
 		} else {
 			return POINTS_FOR_MY_ROCK
 		}
-
 	}
-
 	return 0
 }
 
 func calculateScore_part2(s string) int {
 	data := re_encode_only_their_shape_selection(s)
 	gamesequence := strings.Split(data, "\n")
-
 	var score int
 	for _, game := range gamesequence {
-
 		outcome := outcomeScore[byte(game[2])]
 		score += outcome + pointsFromMyShapeSelection(game, outcome)
 	}
-
 	return score
 }
 
